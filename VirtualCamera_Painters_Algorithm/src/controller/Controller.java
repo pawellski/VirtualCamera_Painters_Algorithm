@@ -8,7 +8,6 @@ package controller;
 import camera.Camera;
 import camera.Figure;
 import camera.Line2D;
-import camera.Line3D;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -86,6 +85,7 @@ public class Controller {
             }
             camera.projectTo2D();
             camera.moveConstructionToCenter();
+            camera.convertPointsToFill();
             draw();
         }
     }
@@ -105,14 +105,9 @@ public class Controller {
         GraphicsContext gc = viewport.getGraphicsContext2D();
         gc.setLineWidth(1.8);
         for (Figure figure : camera.getFigures()) {
-            gc.beginPath();
+            gc.setFill(Color.web(figure.getColor()));
+            gc.fillPolygon(figure.getListOfX(), figure.getListOfY(), figure.getListOfX().length);
             gc.setStroke(Color.web(figure.getColor()));
-            for (Line2D line : figure.getLines2D()) {
-                gc.moveTo(line.getPoint1().getX(), line.getPoint1().getY());
-                gc.lineTo(line.getPoint2().getX(), line.getPoint2().getY());
-            }
-            gc.stroke();
         }
     }
-
 }

@@ -181,4 +181,14 @@ public class Camera {
     public List<Figure> getFigures() {
         return construction.getFigures();
     }
+    
+    public void convertPointsToFill(){
+        for(Figure figure : construction.getFigures()){
+            figure.convertToTables();
+        }
+    }
+
+    public Construction getConstruction() {
+        return construction;
+    }
 }

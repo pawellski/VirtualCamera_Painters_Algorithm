@@ -14,13 +14,16 @@ import javafx.scene.paint.Color;
  * @author Paweł
  */
 public class Figure {
-
     private String color;
     private List<Line3D> lines3D;
     private List<Line2D> lines2D;
+    private double[] listOfX;
+    private double[] listOfY;
 
     public Figure(String color, ArrayList<Line3D> lines) {
         this.lines3D = lines;
+        this.listOfX = new double[lines.size()];
+        this.listOfY = new double[lines.size()];
         this.color = color;
     }
 
@@ -46,6 +49,21 @@ public class Figure {
 
     public String getColor() {
         return color;
+    }
+
+    public void convertToTables() {
+        for (int i = 0; i < lines2D.size(); i++) {
+            listOfX[i] = lines2D.get(i).getPoint1().getX();
+            listOfY[i] = lines2D.get(i).getPoint1().getY();
+        }
+    }
+
+    public double[] getListOfX() {
+        return listOfX;
+    }
+
+    public double[] getListOfY() {
+        return listOfY;
     }
 
 }

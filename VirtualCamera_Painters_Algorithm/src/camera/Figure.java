@@ -7,24 +7,27 @@ package camera;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.scene.paint.Color;
 
 /**
  *
  * @author Paweł
  */
 public class Figure {
+
     private String color;
     private List<Line3D> lines3D;
     private List<Line2D> lines2D;
     private double[] listOfX;
     private double[] listOfY;
+    private Point3D centroid;
+    private double distance;
 
     public Figure(String color, ArrayList<Line3D> lines) {
         this.lines3D = lines;
         this.listOfX = new double[lines.size()];
         this.listOfY = new double[lines.size()];
         this.color = color;
+        searchCentroids();
     }
 
     public List<Line3D> getLines3D() {
@@ -64,6 +67,32 @@ public class Figure {
 
     public double[] getListOfY() {
         return listOfY;
+    }
+
+    private double searchAverage(int axis) {
+        double sum = 0;
+        for (Line3D l : lines3D) {
+            if (axis == 0) {
+                sum = sum + l.getPoint1().getX();
+            } else if (axis == 1) {
+                sum = sum + l.getPoint1().getY();
+            } else if (axis == 2) {
+                sum = sum + l.getPoint1().getZ();
+            }
+        }
+        return sum / lines3D.size();
+    }
+
+    public void searchCentroid() {
+        double x = searchAverage(0);
+        double y = searchAverage(1);
+        double z = searchAverage(2);
+        centroid = new Point3D(x, y, z);
+        countDistance();
+    }
+
+    private void countDistance() {
+        this.distance = Math.sqrt(Math.pow(centroid.getX(), 2) + Math.pow(centroid.getY(), 2) + Math.pow(centroid.getZ(), 2));
     }
 
 }

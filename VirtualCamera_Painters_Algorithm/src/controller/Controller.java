@@ -8,6 +8,7 @@ package controller;
 import camera.Camera;
 import camera.Figure;
 import camera.Line2D;
+import camera.Line3D;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -21,11 +22,13 @@ import javafx.scene.paint.Color;
 public class Controller {
 
     private Camera camera;
+    private boolean wallHack;
 
     @FXML
     private Canvas viewport;
 
     public void initialize() {
+        this.wallHack = true;
         prepareBackground();
         camera = new Camera("src/resources/picture.txt");
         camera.projectTo2D();
@@ -80,9 +83,17 @@ public class Controller {
                 case "CLOSE_BRACKET":
                     camera.zoomOut();
                     break;
+                case "SPACE":
+                    if (this.wallHack == true) {
+                        this.wallHack = false;
+                    } else {
+                        this.wallHack = true;
+                    }
+                    break;
                 default:
                     break;
             }
+            camera.getConstruction().sortFigures();
             camera.projectTo2D();
             camera.moveConstructionToCenter();
             camera.convertPointsToFill();
@@ -103,11 +114,43 @@ public class Controller {
     private void draw() {
         prepareBackground();
         GraphicsContext gc = viewport.getGraphicsContext2D();
-        gc.setLineWidth(1.8);
-        for (Figure figure : camera.getFigures()) {
-            gc.setFill(Color.web(figure.getColor()));
-            gc.fillPolygon(figure.getListOfX(), figure.getListOfY(), figure.getListOfX().length);
-            gc.setStroke(Color.web(figure.getColor()));
+        if (this.wallHack == false) {
+            for (Figure figure : camera.getFigures()) {
+                boolean drawFigure = true;
+                int count = figure.getLines3D().size();
+                for (Line3D line3D : figure.getLines3D()) {
+                    if (line3D.getPoint1().getZ() < 0) {
+                        count--;
+                    }
+                    if (count == 0) {
+                        drawFigure = false;
+                    }
+                }
+                if (drawFigure == true) {
+                    gc.setFill(Color.web(figure.getColor()));
+                    gc.fillPolygon(figure.getListOfX(), figure.getListOfY(), figure.getListOfX().length);
+                    for (Line2D line : figure.getLines2D()) {
+                        gc.setStroke(Color.BLACK);
+                        gc.setLineWidth(1.0);
+                        gc.beginPath();
+                        gc.moveTo(line.getPoint1().getX(), line.getPoint1().getY());
+                        gc.lineTo(line.getPoint2().getX(), line.getPoint2().getY());
+                        gc.stroke();
+                    }
+                    gc.setStroke(Color.web(figure.getColor()));
+                }
+            }
+        } else {
+            gc.setStroke(Color.WHITE);
+            gc.setLineWidth(1.8);
+            gc.beginPath();
+            for (Figure figure : camera.getFigures()) {
+                for (Line2D line : figure.getLines2D()) {
+                    gc.moveTo(line.getPoint1().getX(), line.getPoint1().getY());
+                    gc.lineTo(line.getPoint2().getX(), line.getPoint2().getY());
+                }
+            }
+            gc.stroke();
         }
     }
 }

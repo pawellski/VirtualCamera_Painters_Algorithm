@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author Paweł
  */
-public class Figure {
+public class Figure implements Comparable<Figure>{
 
     private String color;
     private List<Line3D> lines3D;
@@ -27,7 +27,7 @@ public class Figure {
         this.listOfX = new double[lines.size()];
         this.listOfY = new double[lines.size()];
         this.color = color;
-        searchCentroids();
+        searchCentroid();
     }
 
     public List<Line3D> getLines3D() {
@@ -93,6 +93,21 @@ public class Figure {
 
     private void countDistance() {
         this.distance = Math.sqrt(Math.pow(centroid.getX(), 2) + Math.pow(centroid.getY(), 2) + Math.pow(centroid.getZ(), 2));
+    }
+
+    @Override
+    public int compareTo(Figure o) {
+        if (o == null) {
+            return -1;
+        }
+
+        if (this.distance > o.distance) {
+            return -1;
+        } else if (this.distance < o.distance) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
 }

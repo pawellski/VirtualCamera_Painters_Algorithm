@@ -89,7 +89,7 @@ public class Figure implements Comparable<Figure>{
     @Override
     public int compareTo(Figure o) {
         if (o == null) {
-            return -1;
+            return 1;
         }
 
         if (this.distance > o.distance) {
